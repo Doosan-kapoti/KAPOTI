@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Production Tracker — Brimer Saldus</title>
+<title>Kapoti Tracker — Brimer Saldus</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -87,7 +87,7 @@ textarea:focus{outline:none;border-color:#1a73e8}
       <p style="margin-top:6px">Enter a 3-digit item number</p>
     </div>
     <div style="width:100%">
-      <input class="big-input" id="item-input" type="text" maxlength="3" placeholder="000" inputmode="numeric" autocomplete="off">
+      <input class="big-input" id="item-input" type="text" maxlength="10" placeholder="000" inputmode="numeric" autocomplete="off">
     </div>
     <div id="search-error" style="display:none" class="error-msg"></div>
     <button class="search-btn" onclick="doSearch()">
@@ -188,7 +188,7 @@ const API_KEY  = 'AIzaSyDiVw0RkfEgUV5KHDrPDFuv_BskWYJSHAs';
 const ITEMS_TAB   = 'Items';
 const WORKERS_TAB = 'Workers';
 const LOG_TAB     = 'Log';
-const TASKS       = ['Sproits','Apzāģēšana','Aplīmēšana/Montāža','Izkrāsošana','Labošana','Samērīšana','Pakošana'];
+const TASKS       = ['Sproits','Apzāģēšana','Aplīmēšana/Montāža','Slīpēšana/Sāni','Izkrāsošana','Labošana','Samērīšana','Pakošana'];
 const SPROITS     = 'Sproits';
 
 let state = {
@@ -235,11 +235,12 @@ async function loadData(){
 }
 
 async function doSearch(){
-  const val=document.getElementById('item-input').value.trim().padStart(3,'0');
+  const raw=document.getElementById('item-input').value.trim();
+  const val=raw.padStart(3,'0');
   const err=document.getElementById('search-error');
   err.style.display='none';
-  if(!val||val.length!==3||isNaN(val)){
-    err.textContent='Please enter a valid 3-digit item number.';
+  if(!raw||raw.length===0||isNaN(raw)){
+    err.textContent='Please enter a valid item number.';
     err.style.display='block'; return;
   }
   const btn=document.querySelector('.search-btn');
@@ -247,9 +248,11 @@ async function doSearch(){
   btn.disabled=true;
   try{
     if(!sheetsData.items) await loadData();
-    const rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r[0]===val);
+    // Try exact match first, then zero-padded match
+    let rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r[0]===raw);
+    if(rowIdx<0) rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r[0]===val);
     if(rowIdx<0){
-      err.textContent=`Item ${val} not found. Ask your manager to add it to the sheet.`;
+      err.textContent=`Item ${raw} not found. Ask your manager to add it to the sheet.`;
       err.style.display='block'; return;
     }
     const row=sheetsData.items[rowIdx];
@@ -379,7 +382,7 @@ async function doSubmit(){
 }
 
 document.getElementById('item-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
-document.getElementById('item-input').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,3)});
+document.getElementById('item-input').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,10)});
 </script>
 </body>
 </html>
