@@ -78,7 +78,6 @@ textarea:focus{outline:none;border-color:#1a73e8}
 <body>
 <div class="app">
 
-<!-- ── SEARCH ── -->
 <div id="s-search" class="screen active">
   <div class="search-wrap">
     <div><i class="ti ti-box-seam" style="font-size:48px;color:#ccc"></i></div>
@@ -96,7 +95,6 @@ textarea:focus{outline:none;border-color:#1a73e8}
   </div>
 </div>
 
-<!-- ── TASKS ── -->
 <div id="s-tasks" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-search')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
@@ -111,7 +109,6 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <div class="tasks-grid" id="tasks-grid"></div>
 </div>
 
-<!-- ── VARIANT ── -->
 <div id="s-variant" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-tasks')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
@@ -123,14 +120,25 @@ textarea:focus{outline:none;border-color:#1a73e8}
   </div>
   <div class="section-label">Select sproits variant</div>
   <div class="variants-grid">
-    <button class="variant-btn" onclick="selectVariant('DA30-KAIROS',this)"><span class="variant-code">DA30</span><span class="variant-desc">KAIROS</span></button>
-    <button class="variant-btn" onclick="selectVariant('HA30-HYUNDAI',this)"><span class="variant-code">HA30</span><span class="variant-desc">HYUNDAI</span></button>
-    <button class="variant-btn" onclick="selectVariant('DA45-KAIROS',this)"><span class="variant-code">DA45</span><span class="variant-desc">KAIROS</span></button>
-    <button class="variant-btn" onclick="selectVariant('HA45-HYUNDAI',this)"><span class="variant-code">HA45</span><span class="variant-desc">HYUNDAI</span></button>
+    <button class="variant-btn" onclick="selectVariant('DA30-KAIROS',this)">
+      <span class="variant-code">DA30</span>
+      <span class="variant-desc">KAIROS</span>
+    </button>
+    <button class="variant-btn" onclick="selectVariant('HA30-HYUNDAI',this)">
+      <span class="variant-code">HA30</span>
+      <span class="variant-desc">HYUNDAI</span>
+    </button>
+    <button class="variant-btn" onclick="selectVariant('DA45-KAIROS',this)">
+      <span class="variant-code">DA45</span>
+      <span class="variant-desc">KAIROS</span>
+    </button>
+    <button class="variant-btn" onclick="selectVariant('HA45-HYUNDAI',this)">
+      <span class="variant-code">HA45</span>
+      <span class="variant-desc">HYUNDAI</span>
+    </button>
   </div>
 </div>
 
-<!-- ── WORKERS ── -->
 <div id="s-workers" class="screen">
   <div class="app-bar">
     <button class="back-btn" id="workers-back-btn"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
@@ -144,7 +152,6 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <div class="worker-list" id="workers-list"></div>
 </div>
 
-<!-- ── CONFIRM ── -->
 <div id="s-confirm" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-workers')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
@@ -167,7 +174,6 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <button class="cancel-btn" onclick="goTo('s-search')">Cancel</button>
 </div>
 
-<!-- ── SUCCESS ── -->
 <div id="s-success" class="screen">
   <div class="success-wrap">
     <div class="success-icon"><i class="ti ti-check" style="font-size:36px;color:#34a853"></i></div>
@@ -177,8 +183,7 @@ textarea:focus{outline:none;border-color:#1a73e8}
   </div>
 </div>
 
-</div><!-- .app -->
-
+</div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsPwWpjMNEPDrqYFis0KYlYHLNbuzdGdWiErCSlQPGL2feKt45UB9xG7BXrDmYFjyA/exec';
