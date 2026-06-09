@@ -180,15 +180,11 @@ textarea:focus{outline:none;border-color:#1a73e8}
 </div><!-- .app -->
 
 
-
 <script>
-// === CONFIGURATION — fill in your Apps Script URL ===
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsPwWpjMNEPDrqYFis0KYlYHLNbuzdGdWiErCSlQPGL2feKt45UB9xG7BXrDmYFjyA/exec';
-// =====================================================
 
 const ITEMS_TAB = 'Items';
 const WORKERS_TAB = 'Workers';
-const LOG_TAB = 'Log';
 
 const TASKS = [
   'Sproits',
@@ -236,7 +232,7 @@ function getInitials(n) {
 
 function formatTime(d) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' +
-         d.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
+    d.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function makeEntry(name, ts) {
@@ -247,23 +243,17 @@ async function fetchSheet(tab) {
   const action = tab === ITEMS_TAB ? 'getItems' : 'getWorkers';
   const r = await fetch(`${SCRIPT_URL}?action=${action}`);
 
-  if (!r.ok) {
-    throw new Error(`Could not load ${tab}. Check your Apps Script URL.`);
-  }
+  if (!r.ok) throw new Error(`Could not load ${tab}.`);
 
   const txt = await r.text();
   let d;
-
   try {
     d = JSON.parse(txt);
   } catch (e) {
     throw new Error(`Invalid JSON returned while loading ${tab}: ${txt}`);
   }
 
-  if (d.status !== 'ok') {
-    throw new Error(d.message || `Error loading ${tab}`);
-  }
-
+  if (d.status !== 'ok') throw new Error(d.message || `Error loading ${tab}`);
   return d.data || [];
 }
 
@@ -274,7 +264,6 @@ async function postForm(payload) {
   });
 
   const txt = await r.text();
-
   let data;
   try {
     data = JSON.parse(txt);
@@ -282,19 +271,16 @@ async function postForm(payload) {
     throw new Error(`Server returned invalid JSON: ${txt}`);
   }
 
-  if (data.status !== 'ok') {
-    throw new Error(data.message || 'Request failed');
-  }
-
+  if (data.status !== 'ok') throw new Error(data.message || 'Request failed');
   return data;
 }
 
 async function updateCell(itemNumber, column, value) {
   return postForm({
     action: 'updateCell',
-    itemNumber: itemNumber,
-    column: column,
-    value: value
+    itemNumber,
+    column,
+    value
   });
 }
 
@@ -324,7 +310,7 @@ async function doSearch() {
 
   err.style.display = 'none';
 
-  if (!raw || raw.length === 0 || isNaN(raw)) {
+  if (!raw || isNaN(raw)) {
     err.textContent = 'Please enter a valid item number.';
     err.style.display = 'block';
     return;
@@ -343,13 +329,13 @@ async function doSearch() {
     }
 
     if (rowIdx < 0) {
-      err.textContent = `Item ${raw} not found. Ask your manager to add it to the sheet.`;
+      err.textContent = `Item ${raw} not found.`;
       err.style.display = 'block';
       return;
     }
 
     const row = sheetsData.items[rowIdx];
-    const headers = sheetsData.items[0];
+    const headers = sheetsData.items[0].map(h => String(h).trim());
 
     state.itemNumber = row[0];
     state.itemRowIndex = rowIdx + 1;
@@ -363,9 +349,8 @@ async function doSearch() {
 
     renderTasks();
     goTo('s-tasks');
-
   } catch (e) {
-    err.textContent = e.message || 'Connection error. Check your internet and try again.';
+    err.textContent = e.message || 'Connection error.';
     err.style.display = 'block';
   } finally {
     btn.innerHTML = '<i class="ti ti-search"></i> Find item';
@@ -444,7 +429,7 @@ function selectTask(task) {
 }
 
 function renderWorkers(task) {
-  const hdrs = sheetsData.workers[0];
+  const hdrs = sheetsData.workers[0].map(h => String(h).trim());
   const col = hdrs.indexOf(task);
 
   const eligible = sheetsData.workers
@@ -505,7 +490,7 @@ async function doSubmit() {
   const now = state.submitTimestamp || new Date();
   const entryValue = makeEntry(state.selectedWorker.name, now);
 
-  const headers = sheetsData.items[0];
+  const headers = sheetsData.items[0].map(h => String(h).trim());
   const taskCol = headers.indexOf(state.selectedTask) + 1;
 
   const btn = document.getElementById('submit-btn');
@@ -548,9 +533,8 @@ async function doSubmit() {
       `${taskLabel} logged for item ${state.itemNumber} by ${state.selectedWorker.name}.`;
 
     goTo('s-success');
-
   } catch (e) {
-    alert(e.message || 'Could not save. Check your internet connection and try again.');
+    alert(e.message || 'Could not save.');
   } finally {
     btn.innerHTML = '<i class="ti ti-check"></i> Submit';
     btn.disabled = false;
