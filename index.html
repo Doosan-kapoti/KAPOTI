@@ -281,7 +281,7 @@ async function doSearch(){
     state.itemRowIndex=rowIdx+1;
     state.itemModel=row[1]||'';
     state.itemData={};
-    TASKS.forEach(t=>{const c=headers.indexOf(t);state.itemData[t]=c>=0?(row[c]||''):'';});
+    TASKS.forEach(t=>{const c=headers.indexOf(t);state.itemData[t]=c>=0?String(row[c]||''):'';});
     renderTasks(); goTo('s-tasks');
   } catch(e){
     err.textContent=e.message||'Connection error. Check your internet and try again.';
@@ -339,7 +339,7 @@ function selectTask(task){
 function renderWorkers(task){
   const hdrs=sheetsData.workers[0];
   const col=hdrs.indexOf(task);
-  const eligible=sheetsData.workers.slice(1).filter(w=>col>=0&&(w[col]||'').toUpperCase()==='TRUE');
+  const eligible=sheetsData.workers.slice(1).filter(w=>col>=0&&String(w[col]||'').toUpperCase()==='TRUE');
   const list=document.getElementById('workers-list');
   list.innerHTML='';
   if(!eligible.length){list.innerHTML=`<p style="color:#888;font-size:14px;text-align:center;padding:2rem">No workers qualified for this task.</p>`;return;}
