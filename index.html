@@ -320,7 +320,16 @@ async function doSearch() {
     err.style.display = 'block';
     return;
   }
+async function postForm(payload) {
+  const r = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: new URLSearchParams(payload)
+  });
 
+  if (!r.ok) throw new Error(`Server error: ${r.status}`); // add this line
+
+  const txt = await r.text();
+}
  const btn = document.querySelector('.search-btn');
   btn.innerHTML = '<span class="spinner"></span> Searching...';
   btn.disabled = true;
@@ -337,7 +346,7 @@ async function doSearch() {
     if (rowIdx < 0) {
       err.textContent = `Item ${raw} not found.`;
       err.style.display = 'block';
-      btn.innerHTML = 'Search'; // Reset button text if item is missing
+      btn.innerHTML = '<i class="ti ti-search"></i> Find item'; // Reset button text if item is missing
       btn.disabled = false;     // Re-enable button interaction
       return;
     }
@@ -365,7 +374,16 @@ async function doSearch() {
     btn.disabled = false;
   }
 }
-
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  // Refresh data when returning to search
+  if (id === 's-search') {
+    sheetsData.items = null;
+    sheetsData.workers = null;
+  }
+}
 function renderTasks() {
   document.getElementById('t-item-num').textContent = state.itemNumber;
 
