@@ -36,22 +36,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .task-btn.todo:active{opacity:0.7}
 .task-name{display:block;margin-bottom:4px}
 .task-meta{display:block;font-size:10px;font-weight:400;opacity:0.75;line-height:1.3;word-break:break-word}
+.sub-tasks-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem}
+.sub-task-btn{padding:18px 16px;border-radius:12px;border:1.5px solid #ddd;background:#fff;cursor:pointer;text-align:left;font-size:14px;font-weight:600;color:#111;display:flex;align-items:center;gap:12px}
+.sub-task-btn:active{background:#f5f5f5}
+.sub-task-icon{width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .variants-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem}
 .variant-btn{padding:22px 10px;border-radius:12px;border:1.5px solid #ddd;background:#fff;cursor:pointer;text-align:center;transition:all 0.15s}
 .variant-btn:active{background:#f5f5f5}
 .variant-btn.selected{border:2.5px solid #1a73e8;background:#e8f0fe}
 .variant-code{display:block;font-size:16px;font-weight:700;color:#111;margin-bottom:4px;font-family:monospace}
 .variant-desc{display:block;font-size:11px;color:#666;font-weight:500}
-.variant-btn.selected .variant-code{color:#1a73e8}
-.variant-btn.selected .variant-desc{color:#1a73e8}
+.variant-btn.selected .variant-code,.variant-btn.selected .variant-desc{color:#1a73e8}
+.fields-form{display:flex;flex-direction:column;gap:14px;margin-bottom:1.25rem}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:12px;font-weight:600;color:#555}
+.field-input{padding:11px 14px;font-size:15px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#111;font-family:inherit;width:100%}
+.field-input:focus{outline:none;border-color:#1a73e8}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.checkbox-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem}
+.checkbox-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;border:1.5px solid #ddd;background:#fff;cursor:pointer}
+.checkbox-item.checked{border-color:#34a853;background:#e6f4ea}
+.checkbox-item input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:#34a853}
+.checkbox-item label{font-size:14px;font-weight:500;color:#111;cursor:pointer;flex:1}
 .worker-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.worker-btn{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;border:1px solid #eee;background:#fff;cursor:pointer;text-align:left;transition:background 0.1s}
+.worker-btn{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;border:1px solid #eee;background:#fff;cursor:pointer;text-align:left}
 .worker-btn:active{background:#f5f5f5}
 .worker-avatar{width:40px;height:40px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a73e8;flex-shrink:0}
 .worker-name{font-size:14px;font-weight:600;color:#111}
 .worker-id{font-size:12px;color:#888;margin-top:1px}
 .confirm-card{background:#f8f9fa;border-radius:12px;padding:14px 16px;margin-bottom:1rem;border:1px solid #eee}
-.confirm-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13px;gap:8px}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;font-size:13px;gap:8px}
 .confirm-row:not(:last-child){border-bottom:1px solid #eee}
 .confirm-label{color:#888;flex-shrink:0;font-weight:500}
 .confirm-value{color:#111;font-weight:600;text-align:right}
@@ -70,38 +84,35 @@ textarea:focus{outline:none;border-color:#1a73e8}
 .progress-bar{height:4px;background:#eee;border-radius:2px;margin-bottom:1.25rem;overflow:hidden}
 .progress-fill{height:100%;background:#1a73e8;border-radius:2px;transition:width 0.3s}
 .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:6px;background:#fef3cd;color:#856404}
+.next-btn{width:100%;padding:14px;font-size:15px;font-weight:600;background:#1a73e8;color:#fff;border:none;border-radius:10px;cursor:pointer;margin-bottom:8px}
+.next-btn:active{opacity:0.85}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid #ddd;border-top-color:#1a73e8;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 .po-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
 .po-btn{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:10px;border:1px solid #eee;background:#fff;cursor:pointer;text-align:left}
 .po-btn:active{background:#f5f5f5}
 .po-number{font-size:15px;font-weight:700;color:#111;font-family:monospace}
 .po-detail{font-size:12px;color:#888;margin-top:2px}
-.po-count{font-size:13px;font-weight:600;color:#1a73e8;background:#e8f0fe;padding:4px 10px;border-radius:20px;white-space:nowrap}
-.spinner{display:inline-block;width:20px;height:20px;border:2px solid #ddd;border-top-color:#1a73e8;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
+.po-count{font-size:13px;font-weight:600;color:#1a73e8;background:#e8f0fe;padding:4px 10px;border-radius:20px}
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- ── SEARCH ── -->
+<!-- SEARCH -->
 <div id="s-search" class="screen active">
   <div class="search-wrap">
     <div><i class="ti ti-box-seam" style="font-size:48px;color:#ccc"></i></div>
-    <div>
-      <h2>Production tracker</h2>
-      <p style="margin-top:6px">Enter a 3-digit item number</p>
-    </div>
+    <div><h2>Production tracker</h2><p style="margin-top:6px">Enter item number</p></div>
     <div style="width:100%">
       <input class="big-input" id="item-input" type="text" maxlength="10" placeholder="000" inputmode="numeric" autocomplete="off">
     </div>
     <div id="search-error" style="display:none" class="error-msg"></div>
-    <button class="search-btn" onclick="doSearch()">
-      <i class="ti ti-search"></i> Find item
-    </button>
+    <button class="search-btn" onclick="doSearch()"><i class="ti ti-search"></i> Find item</button>
   </div>
 </div>
 
-<!-- ── TASKS ── -->
+<!-- TASKS -->
 <div id="s-tasks" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-search')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
@@ -116,17 +127,42 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <div class="tasks-grid" id="tasks-grid"></div>
 </div>
 
-<!-- ── VARIANT ── -->
-<div id="s-variant" class="screen">
+<!-- SPROITS SUB-TASKS -->
+<div id="s-sproits" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-tasks')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
-    <h1>Sproits <span class="badge">Step 1 of 2</span></h1>
+    <h1>Sproits <span class="badge">Select type</span></h1>
   </div>
   <div class="item-header" style="margin-bottom:1rem">
-    <div class="lbl">Item</div>
-    <div class="val" id="v-item-num">—</div>
+    <div class="lbl">Item</div><div class="val" id="sproits-item-num">—</div>
   </div>
-  <div class="section-label">Select sproits variant</div>
+  <div class="section-label">Select sproits type</div>
+  <div class="sub-tasks-list">
+    <button class="sub-task-btn" onclick="selectSproitsType('Krāsošana')">
+      <div class="sub-task-icon"><i class="ti ti-palette" style="color:#1a73e8"></i></div>
+      <div><div>Krāsošana</div><div style="font-size:12px;color:#888;font-weight:400;margin-top:2px">Variant + batch numbers + temp + humidity</div></div>
+    </button>
+    <button class="sub-task-btn" onclick="selectSproitsType('Līmēšana')">
+      <div class="sub-task-icon"><i class="ti ti-droplet" style="color:#1a73e8"></i></div>
+      <div><div>Līmēšana</div><div style="font-size:12px;color:#888;font-weight:400;margin-top:2px">Batch numbers + temp + humidity</div></div>
+    </button>
+    <button class="sub-task-btn" onclick="selectSproitsType('Izraušana no Formas')">
+      <div class="sub-task-icon"><i class="ti ti-checkbox" style="color:#1a73e8"></i></div>
+      <div><div>Izraušana no Formas</div><div style="font-size:12px;color:#888;font-weight:400;margin-top:2px">Product check + form check</div></div>
+    </button>
+  </div>
+</div>
+
+<!-- VARIANT SELECTION (Krāsošana only) -->
+<div id="s-variant" class="screen">
+  <div class="app-bar">
+    <button class="back-btn" onclick="goTo('s-sproits')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
+    <h1>Krāsošana <span class="badge">Step 1 of 3</span></h1>
+  </div>
+  <div class="item-header" style="margin-bottom:1rem">
+    <div class="lbl">Item</div><div class="val" id="v-item-num">—</div>
+  </div>
+  <div class="section-label">Select variant</div>
   <div class="variants-grid">
     <button class="variant-btn" onclick="selectVariant('DA30-KAIROS',this)"><span class="variant-code">DA30</span><span class="variant-desc">KAIROS</span></button>
     <button class="variant-btn" onclick="selectVariant('HA30-HYUNDAI',this)"><span class="variant-code">HA30</span><span class="variant-desc">HYUNDAI</span></button>
@@ -135,60 +171,94 @@ textarea:focus{outline:none;border-color:#1a73e8}
   </div>
 </div>
 
-<!-- ── PO SELECTION ── -->
+<!-- FIELDS FORM (Krāsošana, Līmēšana, Aplīmēšana) -->
+<div id="s-fields" class="screen">
+  <div class="app-bar">
+    <button class="back-btn" id="fields-back-btn"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
+    <h1 id="fields-title">Details</h1>
+  </div>
+  <div class="item-header" style="margin-bottom:1rem">
+    <div class="lbl">Task</div><div class="val sm" id="fields-task-name">—</div>
+  </div>
+  <div class="fields-form" id="fields-form"></div>
+  <button class="next-btn" onclick="fieldsNext()"><i class="ti ti-arrow-right"></i> Next</button>
+</div>
+
+<!-- CHECKBOXES (Izraušana no Formas, Pakošana) -->
+<div id="s-checks" class="screen">
+  <div class="app-bar">
+    <button class="back-btn" id="checks-back-btn"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
+    <h1 id="checks-title">Checks</h1>
+  </div>
+  <div class="item-header" style="margin-bottom:1rem">
+    <div class="lbl">Task</div><div class="val sm" id="checks-task-name">—</div>
+  </div>
+  <div class="section-label">Confirm the following</div>
+  <div class="checkbox-list" id="checkbox-list"></div>
+  <button class="next-btn" onclick="checksNext()"><i class="ti ti-arrow-right"></i> Next</button>
+</div>
+
+<!-- NETO WEIGHT (Apzāģēšana) -->
+<div id="s-weight" class="screen">
+  <div class="app-bar">
+    <button class="back-btn" onclick="goTo('s-tasks')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
+    <h1>Apzāģēšana</h1>
+  </div>
+  <div class="item-header" style="margin-bottom:1rem">
+    <div class="lbl">Item</div><div class="val" id="weight-item-num">—</div>
+  </div>
+  <div class="fields-form">
+    <div class="field-group">
+      <div class="field-label">Neto weight (kg)</div>
+      <input class="field-input" id="neto-weight" type="number" step="0.1" placeholder="0.0">
+    </div>
+  </div>
+  <button class="next-btn" onclick="weightNext()"><i class="ti ti-arrow-right"></i> Next</button>
+</div>
+
+<!-- PO SELECTION -->
 <div id="s-po" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-tasks')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
     <h1>Select PO number</h1>
   </div>
   <div class="item-header" style="margin-bottom:0.75rem">
-    <div class="lbl">Item</div>
-    <div class="val" id="po-item-num">—</div>
+    <div class="lbl">Item</div><div class="val" id="po-item-num">—</div>
   </div>
   <p style="font-size:13px;color:#888;margin-bottom:1rem">Select the PO this item is being finished for</p>
-  <div id="po-loading" style="text-align:center;padding:2rem;color:#888;font-size:14px;display:none">Loading PO numbers...</div>
   <div class="po-list" id="po-list"></div>
 </div>
 
-<!-- ── WORKERS ── -->
+<!-- WORKERS -->
 <div id="s-workers" class="screen">
   <div class="app-bar">
     <button class="back-btn" id="workers-back-btn"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
     <h1>Select worker</h1>
   </div>
   <div class="item-header" style="margin-bottom:0.75rem">
-    <div class="lbl">Logging task</div>
-    <div class="val sm" id="w-task-name">—</div>
+    <div class="lbl">Logging task</div><div class="val sm" id="w-task-name">—</div>
   </div>
   <p style="font-size:13px;color:#888;margin-bottom:1rem">Showing workers qualified for this task</p>
   <div class="worker-list" id="workers-list"></div>
 </div>
 
-<!-- ── CONFIRM ── -->
+<!-- CONFIRM -->
 <div id="s-confirm" class="screen">
   <div class="app-bar">
     <button class="back-btn" onclick="goTo('s-workers')"><i class="ti ti-arrow-left" style="font-size:22px"></i></button>
     <h1>Confirm & submit</h1>
   </div>
-  <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
-  <div class="confirm-card">
-    <div class="confirm-row"><span class="confirm-label">Item</span><span class="confirm-value" id="c-item">—</span></div>
-    <div class="confirm-row" id="c-variant-row" style="display:none"><span class="confirm-label">Variant</span><span class="confirm-value" id="c-variant">—</span></div>
-    <div class="confirm-row" id="c-po-row" style="display:none"><span class="confirm-label">PO</span><span class="confirm-value" id="c-po">—</span></div>
-    <div class="confirm-row"><span class="confirm-label">Task</span><span class="confirm-value" id="c-task">—</span></div>
-    <div class="confirm-row"><span class="confirm-label">Worker</span><span class="confirm-value" id="c-worker">—</span></div>
-    <div class="confirm-row"><span class="confirm-label">Saved as</span><span class="confirm-value muted" id="c-saved-as">—</span></div>
-    <div class="confirm-row"><span class="confirm-label">Time</span><span class="confirm-value" id="c-time">—</span></div>
-  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+  <div class="confirm-card" id="confirm-card"></div>
   <div class="comment-wrap">
     <div class="section-label" style="margin-bottom:6px">Comment (optional)</div>
-    <textarea id="comment-input" placeholder="Add any notes about this task..."></textarea>
+    <textarea id="comment-input" placeholder="Add any notes..."></textarea>
   </div>
   <button class="submit-btn" id="submit-btn" onclick="doSubmit()"><i class="ti ti-check"></i> Submit</button>
   <button class="cancel-btn" onclick="goTo('s-search')">Cancel</button>
 </div>
 
-<!-- ── SUCCESS ── -->
+<!-- SUCCESS -->
 <div id="s-success" class="screen">
   <div class="success-wrap">
     <div class="success-icon"><i class="ti ti-check" style="font-size:36px;color:#34a853"></i></div>
@@ -198,39 +268,49 @@ textarea:focus{outline:none;border-color:#1a73e8}
   </div>
 </div>
 
-</div><!-- .app -->
-
+</div>
 <script>
-// === CONFIGURATION — fill in your Apps Script URL ===
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNk_h6kYjekbnnQpp4Rxc67UEOxD3N7e0HQQLyBh9YPCs_Fvw0RcO_AS3fQNxqOo33/exec';
-// =====================================================
+// === CONFIGURATION ===
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_X2g8tY8N-L4tosyXJ0EnD9WMmvoaV0xoHUecEWhQJRJu7ruRmLzCBxXglibYeITS/exec';
 
-const ITEMS_TAB   = 'Items';
-const WORKERS_TAB = 'Workers';
-const LOG_TAB     = 'Log';
-const TASKS       = ['Sproits','Apzāģēšana','Aplīmēšana/Montāža','Slīpēšana/Sāni','Izkrāsošana','Labošana','Samērīšana','Pakošana'];
+const TASKS = ['Sproits','Apzāģēšana','Aplīmēšana/Montāža','Slīpēšana/Sāni','Izkrāsošana','Labošana','Samērīšana','Pakošana'];
 const SPROITS     = 'Sproits';
+const APZAGESANA  = 'Apzāģēšana';
+const APLIMESANA  = 'Aplīmēšana/Montāža';
 const SAMERISANA  = 'Samērīšana';
-const PO_TAB      = 'PO';
+const PAKOSANA    = 'Pakošana';
+
+// Tasks that have adjacent extra-field columns in the Items sheet
+const EXTRA_FIELDS = {
+  'Krāsošana':          ['Batch krāsa','Batch cietinātājs','Temperatūra °C','Mitrums %'],
+  'Līmēšana':           ['Batch līme 1','Batch līme 2','Temperatūra °C','Mitrums %'],
+  'Aplīmēšana/Montāža': ['Batch 1','Batch 2','Temperatūra °C','Mitrums %'],
+  'Apzāģēšana':         ['Neto svars kg'],
+};
+
+const CHECKBOXES = {
+  'Izraušana no Formas': ['Produkts izskatās labi','Forma izskatās labi'],
+  'Pakošana':            ['Pārbaude pirms iepakošanas','Iepakotā pārbaude'],
+};
 
 let state = {
-  itemNumber:null, itemRowIndex:null, itemData:null, itemModel:null,
-  selectedTask:null, selectedVariant:null, selectedWorker:null,
-  selectedPO:null, submitTimestamp:null
+  itemNumber:null, itemData:null, itemModel:null,
+  selectedTask:null, selectedSubTask:null, selectedVariant:null,
+  selectedWorker:null, selectedPO:null,
+  extraFields:{}, checkboxValues:{},
+  submitTimestamp:null
 };
 let sheetsData = { items:null, workers:null, po:null };
 
+// ── Navigation
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='s-search'){
-    sheetsData.items=null;
-    sheetsData.workers=null;
-    sheetsData.po=null;
-  }
+  if(id==='s-search'){ sheetsData.items=null; sheetsData.workers=null; sheetsData.po=null; }
 }
 
+// ── Utilities
 function getInitials(n){return(n||'?').split(/[\s\-_]/).map(w=>w[0]).join('').toUpperCase().slice(0,2)}
 function formatTime(d){return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' '+d.toLocaleDateString([],{day:'2-digit',month:'short',year:'numeric'})}
 function makeEntry(name,ts){
@@ -241,15 +321,24 @@ function makeEntry(name,ts){
   return`${firstName} | ${day}/${month}`;
 }
 
+// ── API
+async function postForm(payload){
+  const r=await fetch(SCRIPT_URL,{method:'POST',body:new URLSearchParams(payload)});
+  if(!r.ok) throw new Error(`Server error: ${r.status}`);
+  const txt=await r.text();
+  let data;
+  try{data=JSON.parse(txt);}catch(e){throw new Error(`Invalid JSON: ${txt}`);}
+  if(data.status!=='ok') throw new Error(data.message||'Request failed');
+  return data;
+}
+
 async function fetchSheet(tab){
   const actionMap={'Items':'getItems','Workers':'getWorkers','PO':'getPO'};
-  const action=actionMap[tab]||'getItems';
-  const r=await fetch(`${SCRIPT_URL}?action=${action}`);
-  if(!r.ok) throw new Error(`Could not load ${tab}. Check your Apps Script URL.`);
+  const r=await fetch(`${SCRIPT_URL}?action=${actionMap[tab]}`);
+  if(!r.ok) throw new Error(`Could not load ${tab}`);
   const txt=await r.text();
   let d;
-  try{d=JSON.parse(txt);}
-  catch(e){throw new Error(`Invalid JSON returned while loading ${tab}: ${txt}`);}
+  try{d=JSON.parse(txt);}catch(e){throw new Error(`Invalid JSON from ${tab}`);}
   if(d.status!=='ok') throw new Error(d.message||`Error loading ${tab}`);
   return d.data||[];
 }
@@ -260,85 +349,57 @@ async function loadData(){
   sheetsData.po=await fetchSheet('PO');
 }
 
-async function postForm(payload){
-  const r = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: new URLSearchParams(payload)
-  });
-  if(!r.ok) throw new Error(`Server error: ${r.status}`);
-  const txt = await r.text();
-  let data;
-  try { data = JSON.parse(txt); }
-  catch(e){ throw new Error(`Server returned invalid JSON: ${txt}`); }
-  if(data.status !== 'ok') throw new Error(data.message || 'Request failed');
-  return data;
-}
-
-async function updateCell(itemNumber, column, value){
-  return postForm({ action:'updateCell', itemNumber, column, value });
+async function updateCell(itemNumber,column,value){
+  return postForm({action:'updateCell',itemNumber,column,value});
 }
 
 async function appendLog(entry){
   return postForm({
-    action:     'appendLog',
-    timestamp:  entry.timestamp  || '',
-    itemNumber: entry.item       || '',
-    model:      entry.model      || '',
-    task:       entry.task       || '',
-    variant:    entry.variant    || '',
-    workerID:   entry.workerID   || '',
-    workerName: entry.workerName || '',
-    comment:    entry.comment    || ''
+    action:'appendLog',
+    timestamp:entry.timestamp||'',
+    itemNumber:entry.item||'',
+    model:entry.model||'',
+    task:entry.task||'',
+    subTask:entry.subTask||'',
+    variant:entry.variant||'',
+    workerID:entry.workerID||'',
+    workerName:entry.workerName||'',
+    po:entry.po||'',
+    extraFields:JSON.stringify(entry.extraFields||{}),
+    checkboxes:JSON.stringify(entry.checkboxes||{}),
+    comment:entry.comment||''
   });
 }
 
-async function loadData(){
-  sheetsData.items=await fetchSheet('Items');
-  sheetsData.workers=await fetchSheet('Workers');
-  sheetsData.po=await fetchSheet('PO');
-}
-
+// ── Search
 async function doSearch(){
   const raw=document.getElementById('item-input').value.trim();
   const val=raw.padStart(3,'0');
   const err=document.getElementById('search-error');
   err.style.display='none';
-  if(!raw||raw.length===0||isNaN(raw)){
-    err.textContent='Please enter a valid item number.';
-    err.style.display='block'; return;
-  }
+  if(!raw||isNaN(raw)){err.textContent='Please enter a valid item number.';err.style.display='block';return;}
   const btn=document.querySelector('.search-btn');
-  btn.innerHTML='<span class="spinner"></span> Searching...';
-  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Searching...';btn.disabled=true;
   try{
     if(!sheetsData.items) await loadData();
-    // Try exact match first, then zero-padded match
-    let rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r[0]===raw);
-    if(rowIdx<0) rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r[0]===val);
+    let rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r&&String(r[0]).trim()===raw);
+    if(rowIdx<0) rowIdx=sheetsData.items.findIndex((r,i)=>i>0&&r&&String(r[0]).trim()===val);
     if(rowIdx<0){
-      err.textContent=`Item ${raw} not found. Ask your manager to add it to the sheet.`;
-      err.style.display='block';
-      btn.innerHTML='<i class="ti ti-search"></i> Find item';
-      btn.disabled=false;
-      return;
+      err.textContent=`Item ${raw} not found.`;err.style.display='block';
+      btn.innerHTML='<i class="ti ti-search"></i> Find item';btn.disabled=false;return;
     }
     const row=sheetsData.items[rowIdx];
-    const headers=sheetsData.items[0];
-    state.itemNumber=row[0]; // use exact value from sheet
-    state.itemRowIndex=rowIdx+1;
-    state.itemModel=row[1]||'';
+    const headers=sheetsData.items[0].map(h=>String(h).trim());
+    state.itemNumber=String(row[0]);
+    state.itemModel=String(row[1]||'');
     state.itemData={};
     TASKS.forEach(t=>{const c=headers.indexOf(t);state.itemData[t]=c>=0?String(row[c]||''):'';});
-    renderTasks(); goTo('s-tasks');
-  } catch(e){
-    err.textContent=e.message||'Connection error. Check your internet and try again.';
-    err.style.display='block';
-  } finally{
-    btn.innerHTML='<i class="ti ti-search"></i> Find item';
-    btn.disabled=false;
-  }
+    renderTasks();goTo('s-tasks');
+  }catch(e){err.textContent=e.message||'Connection error.';err.style.display='block';}
+  finally{btn.innerHTML='<i class="ti ti-search"></i> Find item';btn.disabled=false;}
 }
 
+// ── Render tasks
 function renderTasks(){
   document.getElementById('t-item-num').textContent=state.itemNumber;
   const mb=document.getElementById('t-model-badge');
@@ -352,85 +413,174 @@ function renderTasks(){
     const btn=document.createElement('button');
     btn.className=`task-btn ${done?'done':'todo'}`;
     const shortEntry=done?entry.split(' | ')[0]:'';
-    btn.innerHTML=`<span class="task-name">${done?'<i class="ti ti-check"></i> ':''}${task}</span><span class="task-meta">${done?shortEntry:task===SPROITS?'Select variant':'Tap to log'}</span>`;
-    if(!done) btn.onclick=()=>task===SPROITS?startSproits():selectTask(task);
+    btn.innerHTML=`<span class="task-name">${done?'<i class="ti ti-check"></i> ':''}${task}</span><span class="task-meta">${done?shortEntry:'Tap to log'}</span>`;
+    if(!done) btn.onclick=()=>handleTaskTap(task);
     grid.appendChild(btn);
   });
 }
 
-function startSproits(){
-  state.selectedTask=SPROITS; state.selectedVariant=null;
-  document.getElementById('v-item-num').textContent=state.itemNumber;
-  document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
-  goTo('s-variant');
+// ── Task routing
+function handleTaskTap(task){
+  state.selectedTask=task;
+  state.selectedSubTask=null;
+  state.selectedVariant=null;
+  state.selectedPO=null;
+  state.extraFields={};
+  state.checkboxValues={};
+
+  if(task===SPROITS){
+    document.getElementById('sproits-item-num').textContent=state.itemNumber;
+    goTo('s-sproits');
+  } else if(task===APZAGESANA){
+    document.getElementById('weight-item-num').textContent=state.itemNumber;
+    document.getElementById('neto-weight').value='';
+    goTo('s-weight');
+  } else if(task===APLIMESANA){
+    showFields(APLIMESANA, ()=>goTo('s-tasks'), 'Aplīmēšana/Montāža');
+  } else if(task===SAMERISANA){
+    showPO();
+  } else if(task===PAKOSANA){
+    showChecks(PAKOSANA, ()=>goTo('s-tasks'), 'Pakošana');
+  } else {
+    showWorkers(task, ()=>goTo('s-tasks'));
+  }
 }
 
+// ── Sproits sub-task selection
+function selectSproitsType(type){
+  state.selectedSubTask=type;
+  if(type==='Krāsošana'){
+    document.getElementById('v-item-num').textContent=state.itemNumber;
+    document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
+    goTo('s-variant');
+  } else if(type==='Līmēšana'){
+    showFields('Līmēšana', ()=>goTo('s-sproits'), 'Līmēšana');
+  } else if(type==='Izraušana no Formas'){
+    showChecks('Izraušana no Formas', ()=>goTo('s-sproits'), 'Izraušana no Formas');
+  }
+}
+
+// ── Variant selection (Krāsošana)
 function selectVariant(variant,btn){
   state.selectedVariant=variant;
   document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
   setTimeout(()=>{
-    document.getElementById('w-task-name').textContent=`${SPROITS} — ${variant}`;
-    document.getElementById('workers-back-btn').onclick=()=>goTo('s-variant');
-    renderWorkers(SPROITS); goTo('s-workers');
+    showFields('Krāsošana', ()=>goTo('s-variant'), `Krāsošana — ${variant}`);
   },200);
 }
 
-function selectTask(task){
-  state.selectedTask=task; state.selectedVariant=null; state.selectedPO=null;
-  if(task===SAMERISANA){
-    startPOSelection();
-    return;
-  }
-  document.getElementById('w-task-name').textContent=task;
-  document.getElementById('workers-back-btn').onclick=()=>goTo('s-tasks');
-  renderWorkers(task); goTo('s-workers');
+// ── Fields form
+function showFields(taskKey, backFn, titleText){
+  const fields=EXTRA_FIELDS[taskKey]||[];
+  document.getElementById('fields-title').textContent=titleText||taskKey;
+  document.getElementById('fields-task-name').textContent=titleText||taskKey;
+  document.getElementById('fields-back-btn').onclick=backFn;
+  const form=document.getElementById('fields-form');
+  form.innerHTML='';
+  fields.forEach(f=>{
+    const div=document.createElement('div');
+    div.className='field-group';
+    const isNum=f.includes('°C')||f.includes('%')||f.includes('kg');
+    div.innerHTML=`<div class="field-label">${f}</div><input class="field-input" data-field="${f}" type="${isNum?'number':'text'}" step="${isNum?'0.1':''}" placeholder="${isNum?'0.0':'Enter value'}">`;
+    form.appendChild(div);
+  });
+  goTo('s-fields');
 }
 
-function startPOSelection(){
+function fieldsNext(){
+  const inputs=document.querySelectorAll('#fields-form .field-input');
+  let allFilled=true;
+  inputs.forEach(inp=>{
+    if(!inp.value.trim()){allFilled=false;inp.style.borderColor='#c62828';}
+    else{inp.style.borderColor='#ddd';state.extraFields[inp.dataset.field]=inp.value.trim();}
+  });
+  if(!allFilled){alert('Please fill in all fields before continuing.');return;}
+  // Determine which task we are in
+  const task=state.selectedSubTask||state.selectedTask;
+  if(task==='Krāsošana'||task==='Līmēšana'){
+    showWorkers(SPROITS, ()=>goTo('s-fields'));
+  } else if(task===APLIMESANA){
+    showWorkers(APLIMESANA, ()=>goTo('s-fields'));
+  } else if(task===APZAGESANA){
+    showWorkers(APZAGESANA, ()=>goTo('s-fields'));
+  } else {
+    showWorkers(state.selectedTask, ()=>goTo('s-fields'));
+  }
+}
+
+// ── Checkboxes
+function showChecks(taskKey, backFn, titleText){
+  const boxes=CHECKBOXES[taskKey]||[];
+  document.getElementById('checks-title').textContent=titleText||taskKey;
+  document.getElementById('checks-task-name').textContent=titleText||taskKey;
+  document.getElementById('checks-back-btn').onclick=backFn;
+  const list=document.getElementById('checkbox-list');
+  list.innerHTML='';
+  boxes.forEach(label=>{
+    const div=document.createElement('div');
+    div.className='checkbox-item';
+    const id=`chk-${label.replace(/\s/g,'-')}`;
+    div.innerHTML=`<input type="checkbox" id="${id}" data-label="${label}" onchange="this.closest('.checkbox-item').classList.toggle('checked',this.checked)"><label for="${id}">${label}</label>`;
+    list.appendChild(div);
+  });
+  goTo('s-checks');
+}
+
+function checksNext(){
+  const checks=document.querySelectorAll('#checkbox-list input[type=checkbox]');
+  checks.forEach(c=>{state.checkboxValues[c.dataset.label]=c.checked?'✓':'☐';});
+  const task=state.selectedSubTask||state.selectedTask;
+  if(task==='Izraušana no Formas'){
+    showWorkers(SPROITS, ()=>goTo('s-checks'));
+  } else {
+    showWorkers(PAKOSANA, ()=>goTo('s-checks'));
+  }
+}
+
+// ── Weight
+function weightNext(){
+  const w=document.getElementById('neto-weight').value.trim();
+  if(!w){alert('Please enter the neto weight.');document.getElementById('neto-weight').style.borderColor='#c62828';return;}
+  state.extraFields['Neto svars kg']=w;
+  showWorkers(APZAGESANA, ()=>goTo('s-weight'));
+}
+
+// ── PO selection
+function showPO(){
   document.getElementById('po-item-num').textContent=state.itemNumber;
   const list=document.getElementById('po-list');
   list.innerHTML='';
   if(!sheetsData.po||sheetsData.po.length<=1){
-    list.innerHTML=`<p style="color:#888;font-size:14px;text-align:center;padding:2rem">No PO numbers found. Ask your manager to add them.</p>`;
-    goTo('s-po'); return;
+    list.innerHTML=`<p style="color:#888;font-size:14px;text-align:center;padding:2rem">No PO numbers found.</p>`;
+    goTo('s-po');return;
   }
-  const headers=sheetsData.po[0].map(h=>String(h).trim());
-  // PO sheet: PONumber | Ordered_DA30 | Ordered_HA30 | Ordered_DA45 | Ordered_HA45 | Completed_DA30 | Completed_HA30 | Completed_DA45 | Completed_HA45
   sheetsData.po.slice(1).forEach(row=>{
     if(!row[0]) return;
     const poNum=String(row[0]).trim();
+    const ordered=(Number(row[1]||0)+Number(row[3]||0)+Number(row[5]||0)+Number(row[7]||0));
+    const completed=(Number(row[2]||0)+Number(row[4]||0)+Number(row[6]||0)+Number(row[8]||0));
     const btn=document.createElement('button');
     btn.className='po-btn';
-    // Count total ordered vs completed
-    const ordered=(Number(row[1]||0)+Number(row[2]||0)+Number(row[3]||0)+Number(row[4]||0));
-    const completed=(Number(row[5]||0)+Number(row[6]||0)+Number(row[7]||0)+Number(row[8]||0));
-    btn.innerHTML=`
-      <div>
-        <div class="po-number">${poNum}</div>
-        <div class="po-detail">${completed} / ${ordered} completed</div>
-      </div>
-      <span class="po-count">${poNum}</span>`;
-    btn.onclick=()=>selectPO(poNum);
+    btn.innerHTML=`<div><div class="po-number">${poNum}</div><div class="po-detail">${completed} / ${ordered} completed</div></div><span class="po-count">${completed}/${ordered}</span>`;
+    btn.onclick=()=>{state.selectedPO=poNum;showWorkers(SAMERISANA,()=>goTo('s-po'));};
     list.appendChild(btn);
   });
   goTo('s-po');
 }
 
-function selectPO(poNum){
-  state.selectedPO=poNum;
-  document.getElementById('w-task-name').textContent=`${SAMERISANA} — ${poNum}`;
-  document.getElementById('workers-back-btn').onclick=()=>goTo('s-po');
-  renderWorkers(SAMERISANA); goTo('s-workers');
-}
-
-function renderWorkers(task){
+// ── Workers
+function showWorkers(taskKey, backFn){
+  document.getElementById('w-task-name').textContent=state.selectedSubTask?`${SPROITS} — ${state.selectedSubTask}`:taskKey;
+  document.getElementById('workers-back-btn').onclick=backFn;
   const hdrs=sheetsData.workers[0].map(h=>String(h).trim());
-  const col=hdrs.indexOf(task);
+  // For Sproits sub-tasks, look up by sub-task name if column exists, else by 'Sproits'
+  const lookupTask=state.selectedSubTask&&hdrs.indexOf(state.selectedSubTask)>=0?state.selectedSubTask:taskKey;
+  const col=hdrs.indexOf(lookupTask);
   const eligible=sheetsData.workers.slice(1).filter(w=>col>=0&&String(w[col]||'').toUpperCase()==='TRUE');
   const list=document.getElementById('workers-list');
   list.innerHTML='';
-  if(!eligible.length){list.innerHTML=`<p style="color:#888;font-size:14px;text-align:center;padding:2rem">No workers qualified for this task.</p>`;return;}
+  if(!eligible.length){list.innerHTML=`<p style="color:#888;font-size:14px;text-align:center;padding:2rem">No workers qualified for this task.</p>`;goTo('s-workers');return;}
   eligible.forEach(w=>{
     const btn=document.createElement('button');
     btn.className='worker-btn';
@@ -438,67 +588,89 @@ function renderWorkers(task){
     btn.onclick=()=>selectWorker(w[0],w[1]);
     list.appendChild(btn);
   });
+  goTo('s-workers');
 }
 
+// ── Select worker → confirm
 function selectWorker(id,name){
   state.selectedWorker={id,name};
-  const now=new Date(); state.submitTimestamp=now;
+  const now=new Date();state.submitTimestamp=now;
   const entryValue=makeEntry(name,now);
-  document.getElementById('c-item').textContent=state.itemNumber;
-  document.getElementById('c-task').textContent=state.selectedTask;
-  const vRow=document.getElementById('c-variant-row');
-  if(state.selectedVariant){vRow.style.display='flex';document.getElementById('c-variant').textContent=state.selectedVariant;}
-  else vRow.style.display='none';
-  const poRow=document.getElementById('c-po-row');
-  if(state.selectedPO){poRow.style.display='flex';document.getElementById('c-po').textContent=state.selectedPO;}
-  else poRow.style.display='none';
-  document.getElementById('c-worker').textContent=`${name} (${id})`;
-  document.getElementById('c-saved-as').textContent=`"${entryValue}"`;
-  document.getElementById('c-time').textContent=formatTime(now);
+  const card=document.getElementById('confirm-card');
+  let rows=`
+    <div class="confirm-row"><span class="confirm-label">Item</span><span class="confirm-value">${state.itemNumber}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Task</span><span class="confirm-value">${state.selectedSubTask?`${SPROITS} — ${state.selectedSubTask}`:state.selectedTask}</span></div>`;
+  if(state.selectedVariant) rows+=`<div class="confirm-row"><span class="confirm-label">Variant</span><span class="confirm-value">${state.selectedVariant}</span></div>`;
+  if(state.selectedPO) rows+=`<div class="confirm-row"><span class="confirm-label">PO</span><span class="confirm-value">${state.selectedPO}</span></div>`;
+  Object.entries(state.extraFields).forEach(([k,v])=>{rows+=`<div class="confirm-row"><span class="confirm-label">${k}</span><span class="confirm-value">${v}</span></div>`;});
+  Object.entries(state.checkboxValues).forEach(([k,v])=>{rows+=`<div class="confirm-row"><span class="confirm-label">${k}</span><span class="confirm-value">${v}</span></div>`;});
+  rows+=`
+    <div class="confirm-row"><span class="confirm-label">Worker</span><span class="confirm-value">${name} (${id})</span></div>
+    <div class="confirm-row"><span class="confirm-label">Saved as</span><span class="confirm-value muted">"${entryValue}"</span></div>
+    <div class="confirm-row"><span class="confirm-label">Time</span><span class="confirm-value">${formatTime(now)}</span></div>`;
+  card.innerHTML=rows;
   document.getElementById('comment-input').value='';
   goTo('s-confirm');
 }
 
+// ── Submit
 async function doSubmit(){
   const comment=document.getElementById('comment-input').value.trim();
   const now=state.submitTimestamp||new Date();
   const entryValue=makeEntry(state.selectedWorker.name,now);
   const headers=sheetsData.items[0].map(h=>String(h).trim());
-  const taskCol=headers.indexOf(state.selectedTask)+1;
   const btn=document.getElementById('submit-btn');
-  btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
   try{
-    if(taskCol<=0) throw new Error(`Task column not found: ${state.selectedTask}`);
-    await updateCell(state.itemNumber, headers[taskCol-1], entryValue);
+    // Write main task cell
+    const taskColName=state.selectedTask;
+    await updateCell(state.itemNumber, taskColName, entryValue);
+
+    // Write sub-task cell if applicable
+    if(state.selectedSubTask){
+      const subCol=headers.indexOf(state.selectedSubTask);
+      if(subCol>=0) await updateCell(state.itemNumber, state.selectedSubTask, entryValue);
+    }
+
+    // Write variant/model
     if(state.selectedVariant){
-      const modelCol=headers.indexOf('Model')+1;
-      if(modelCol>0) await updateCell(state.itemNumber, headers[modelCol-1], state.selectedVariant);
+      const modelCol=headers.indexOf('Model');
+      if(modelCol>=0) await updateCell(state.itemNumber,'Model',state.selectedVariant);
     }
-    // If Samērīšana — also increment PO completed count
-    if(state.selectedTask===SAMERISANA && state.selectedPO && state.itemModel){
-      await postForm({
-        action:    'incrementPO',
-        poNumber:  state.selectedPO,
-        variant:   state.itemModel
-      });
+
+    // Write extra fields (columns must exist next to task column in sheet)
+    for(const [fieldName,fieldVal] of Object.entries(state.extraFields)){
+      const fCol=headers.indexOf(fieldName);
+      if(fCol>=0) await updateCell(state.itemNumber, fieldName, fieldVal);
     }
+
+    // Write checkboxes
+    for(const [fieldName,fieldVal] of Object.entries(state.checkboxValues)){
+      const fCol=headers.indexOf(fieldName);
+      if(fCol>=0) await updateCell(state.itemNumber, fieldName, fieldVal);
+    }
+
+    // Increment PO if Samērīšana
+    if(state.selectedTask===SAMERISANA&&state.selectedPO&&state.itemModel){
+      await postForm({action:'incrementPO',poNumber:state.selectedPO,variant:state.itemModel});
+    }
+
     await appendLog({
       timestamp:now.toISOString(),item:state.itemNumber,
       model:state.selectedVariant||state.itemModel,
-      task:state.selectedTask,variant:state.selectedVariant||'',
+      task:state.selectedTask,subTask:state.selectedSubTask||'',
+      variant:state.selectedVariant||'',
       workerID:state.selectedWorker.id,workerName:state.selectedWorker.name,
-      po:state.selectedPO||'',comment
+      po:state.selectedPO||'',
+      extraFields:state.extraFields,checkboxes:state.checkboxValues,comment
     });
+
     state.itemData[state.selectedTask]=entryValue;
     if(state.selectedVariant) state.itemModel=state.selectedVariant;
-    const taskLabel=state.selectedVariant?`${state.selectedTask} — ${state.selectedVariant}`:state.selectedTask;
-    document.getElementById('success-msg').textContent=`${taskLabel} logged for item ${state.itemNumber} by ${state.selectedWorker.name}.`;
+    document.getElementById('success-msg').textContent=`Task logged for item ${state.itemNumber} by ${state.selectedWorker.name}.`;
     goTo('s-success');
-  } catch(e){
-    alert(e.message||'Could not save. Check your internet connection and try again.');
-  } finally{
-    btn.innerHTML='<i class="ti ti-check"></i> Submit'; btn.disabled=false;
-  }
+  }catch(e){alert(e.message||'Could not save.');}
+  finally{btn.innerHTML='<i class="ti ti-check"></i> Submit';btn.disabled=false;}
 }
 
 document.getElementById('item-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
