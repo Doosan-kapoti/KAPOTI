@@ -234,7 +234,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <script>
 // ══ CONFIG ══
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJQaRxDHM_BNgXABbJps8MvWYcymlF10CRge1xvglR_qGX1dnae4JHdKLMARvWUH_M/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5M4-_CjPTRgTEFW13osGfMFPsMF6M2u1nAxUXegPGZkgXMXW1rvaj-cG175Iya8xI/exec';
 const CACHE_TTL  = 60000; // 60 seconds
 
 // ══ STATE ══
@@ -289,12 +289,16 @@ async function loadData(force=false){
 
 function getPORows(){
   if(!poList) return [];
-  return poList.slice(1).filter(r=>r[2]&&String(r[2]).trim());
+  // PO List: row[0]=blank row, row[1]=header ["ID","PO"], data from row[2]
+  // PO is at index 1
+  return poList.slice(1).filter(r=>r[1]&&String(r[1]).trim());
 }
 
 function getModelsForPO(po){
   if(!poData) return [];
-  return poData.slice(1).filter(r=>String(r[2]).trim()===po);
+  // PO Master: row[0]=header ["ID","PO","Modelis","Ordered","Completed"], data from row[1]
+  // PO=index 1, Modelis=index 2, Ordered=index 3, Completed=index 4
+  return poData.slice(1).filter(r=>String(r[1]).trim()===po);
 }
 
 // ══ HOME ══
@@ -313,10 +317,10 @@ function renderHome(){
   const rows = getPORows();
   let totalOrdered=0, totalCompleted=0;
   const html = rows.map(row=>{
-    const po = String(row[2]).trim();
+    const po = String(row[1]).trim();
     const models = getModelsForPO(po);
-    const ord  = models.reduce((s,r)=>s+(Number(r[4])||0),0);
-    const comp = models.reduce((s,r)=>s+(Number(r[5])||0),0);
+    const ord  = models.reduce((s,r)=>s+(Number(r[3])||0),0);
+    const comp = models.reduce((s,r)=>s+(Number(r[4])||0),0);
     totalOrdered   += ord;
     totalCompleted += comp;
     const pct  = ord>0 ? Math.min(100,Math.round(comp/ord*100)) : 0;
@@ -366,8 +370,8 @@ function openPODetail(po){
 function renderPODetail(po){
   document.getElementById('detail-po-number').textContent = po;
   const models = getModelsForPO(po);
-  const ord  = models.reduce((s,r)=>s+(Number(r[4])||0),0);
-  const comp = models.reduce((s,r)=>s+(Number(r[5])||0),0);
+  const ord  = models.reduce((s,r)=>s+(Number(r[3])||0),0);
+  const comp = models.reduce((s,r)=>s+(Number(r[4])||0),0);
   document.getElementById('detail-po-sub').textContent =
     `${comp} no ${ord} vienībām izgatavots`;
 
@@ -377,9 +381,9 @@ function renderPODetail(po){
     return;
   }
   tbody.innerHTML = models.map(r=>{
-    const modelis  = String(r[3]).trim();
-    const ordered  = Number(r[4])||0;
-    const completed= Number(r[5])||0;
+    const modelis  = String(r[2]).trim();
+    const ordered  = Number(r[3])||0;
+    const completed= Number(r[4])||0;
     const pct      = ordered>0?Math.min(100,Math.round(completed/ordered*100)):0;
     const cls      = completed===0?'c0':completed>=ordered?'cdone':'cpart';
     return `<tr>
@@ -413,7 +417,7 @@ function populatePODropdown(){
   const sel = document.getElementById('form-po');
   sel.innerHTML = '<option value="">— Izvēlies PO —</option>';
   getPORows().forEach(row=>{
-    const po = String(row[2]).trim();
+    const po = String(row[1]).trim();
     sel.innerHTML += `<option value="${po}">${po}</option>`;
   });
 }
@@ -426,7 +430,7 @@ function onPOChange(){
   if(!po||!poData){sel.disabled=true;return;}
   const models = getModelsForPO(po);
   models.forEach(r=>{
-    const m = String(r[3]).trim();
+    const m = String(r[2]).trim();
     sel.innerHTML += `<option value="${m}">${m}</option>`;
   });
   sel.disabled = false;
@@ -460,8 +464,8 @@ async function doSubmit(){
 
     // Update local cache immediately so UI reflects change without re-fetch
     if(poData){
-      const row = poData.slice(1).find(r=>String(r[2]).trim()===po&&String(r[3]).trim()===model);
-      if(row) row[5]=(Number(row[5])||0)+1;
+      const row = poData.slice(1).find(r=>String(r[1]).trim()===po&&String(r[2]).trim()===model);
+      if(row) row[4]=(Number(row[4])||0)+1;
     }
     renderHome(); // re-render home stats in background
 
