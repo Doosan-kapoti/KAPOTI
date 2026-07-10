@@ -109,6 +109,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{padding:14px 32px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;border-radius:11px;cursor:pointer;box-shadow:0 4px 12px rgba(31,56,100,0.25)}
 .btn-secondary{background:none;border:none;color:#2E75B6;font-size:14px;cursor:pointer;padding:8px;font-weight:500}
 
+/* ── MODEL ITEM BLOCKS */
+.model-block{background:#f8faff;border:1.5px solid #e8ecf3;border-radius:12px;padding:14px;margin-bottom:10px}
+.model-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.model-block-name{font-size:13px;font-weight:700;color:#1F3864}
+.model-block-count{font-size:12px;font-weight:600;padding:3px 8px;border-radius:20px}
+.model-block-count.c0{background:#fce8e8;color:#c62828}
+.model-block-count.cpart{background:#fff3e0;color:#e67e00}
+.model-block-count.cdone{background:#e6f4ea;color:#1e6e36}
+.model-chips{display:flex;flex-wrap:wrap;gap:6px}
+.model-chip{background:#fff;border:1.5px solid #d0dcf5;border-radius:8px;padding:7px 10px;font-size:15px;font-weight:700;color:#1F3864;font-family:monospace;letter-spacing:1px}
+.model-chip-empty{font-size:12px;color:#bbb;font-style:italic;font-family:inherit}
+
 /* ── ITEMS SCREEN */
 .items-header{background:linear-gradient(135deg,#1F3864 0%,#2E75B6 100%);padding:18px;flex-shrink:0}
 .items-po{color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:2px}
@@ -191,6 +203,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr><td colspan="3" class="loading-state">Ielādē...</td></tr>
       </tbody>
     </table>
+    <div style="margin-top:16px">
+      <div class="section-label" style="margin-bottom:10px">Iesniegtās vienības pa modeļiem</div>
+      <div id="detail-items-section">
+        <div class="loading-state"><span class="spinner"></span>Ielādē...</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -276,6 +294,7 @@ function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  if(id==='s-home') iepakotieData=null;
 }
 
 // ══ API ══
@@ -382,7 +401,11 @@ async function refreshData(fromDetail=false){
   if(btn) btn.classList.add('spinning');
   try{
     await loadData(true);
-    if(fromDetail && currentPO) renderPODetail(currentPO);
+    iepakotieData = null; // clear items cache too
+    if(fromDetail && currentPO){
+      renderPODetail(currentPO);
+      await loadAndRenderItems(currentPO);
+    }
     else renderHome();
   }catch(e){}
   finally{if(btn) btn.classList.remove('spinning');}
@@ -392,7 +415,62 @@ async function refreshData(fromDetail=false){
 function openPODetail(po){
   currentPO = po;
   renderPODetail(po);
+  loadAndRenderItems(po);
   goTo('s-detail');
+}
+
+async function loadAndRenderItems(po){
+  document.getElementById('detail-items-section').innerHTML =
+    '<div class="loading-state"><span class="spinner"></span>Ielādē vienības...</div>';
+  try{
+    if(!iepakotieData){
+      const data = await apiFetch('getIepakotie');
+      iepakotieData = data;
+    }
+    renderItemBlocks(po);
+  }catch(e){
+    document.getElementById('detail-items-section').innerHTML =
+      `<div class="error-state">Neizdevās ielādēt: ${e.message}</div>`;
+  }
+}
+
+function renderItemBlocks(po){
+  const models = getModelsForPO(po);
+  if(!models.length){
+    document.getElementById('detail-items-section').innerHTML =
+      '<div class="empty-state">Nav modeļu</div>';
+    return;
+  }
+
+  const html = models.map(r=>{
+    const modelis  = String(r[2]).trim();
+    const ordered  = Number(r[3])||0;
+    const completed= Number(r[4])||0;
+    const cls      = completed===0?'c0':completed>=ordered?'cdone':'cpart';
+
+    // Get submitted items for this model
+    // Iepakotie: [0]=ID [1]=Timestamp [2]=PO [3]=Modelis [4]=ItemNumber
+    const items = iepakotieData
+      ? iepakotieData.slice(1)
+          .filter(row=>String(row[2]).trim()===po && String(row[3]).trim()===modelis)
+          .map(row=>Number(row[4]))
+          .sort((a,b)=>a-b)
+      : [];
+
+    const chipsHtml = items.length
+      ? items.map(n=>`<div class="model-chip">${String(n).padStart(3,'0')}</div>`).join('')
+      : '<span class="model-chip-empty">Nav iesniegts</span>';
+
+    return `<div class="model-block">
+      <div class="model-block-header">
+        <div class="model-block-name">${modelis}</div>
+        <span class="model-block-count ${cls}">${completed} / ${ordered}</span>
+      </div>
+      <div class="model-chips">${chipsHtml}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detail-items-section').innerHTML = html;
 }
 
 function renderPODetail(po){
@@ -414,15 +492,13 @@ function renderPODetail(po){
     const completed= Number(r[4])||0;
     const pct      = ordered>0?Math.min(100,Math.round(completed/ordered*100)):0;
     const cls      = completed===0?'c0':completed>=ordered?'cdone':'cpart';
-    return `<tr onclick="openModelItems('${currentPO}','${modelis.replace(/'/g,"\\'")}')"
-               style="cursor:pointer">
+    return `<tr>
       <td>
         <div class="model-name">${modelis}</div>
         <div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
       </td>
       <td class="col-ordered">${ordered}</td>
-      <td class="col-made ${cls}">${completed}${completed>0?` <span style="font-size:10px;color:#aaa">›</span>`:''}
-      </td>
+      <td class="col-made ${cls}">${completed}</td>
     </tr>`;
   }).join('');
 }
