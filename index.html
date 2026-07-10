@@ -227,7 +227,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="success-title">Ierakstīts!</div>
     <div class="success-detail" id="success-detail"></div>
     <button class="btn-primary" onclick="goTo('s-home')">Atpakaļ uz sākumu</button>
-    <button class="btn-secondary" onclick="openForm()">Ievadīt vēl vienu</button>
+    <button class="btn-secondary" onclick="openForm(true)">Ievadīt vēl vienu</button>
   </div>
 </div>
 
@@ -291,7 +291,7 @@ function getPORows(){
   if(!poList) return [];
   // PO List: row[0]=blank row, row[1]=header ["ID","PO"], data from row[2]
   // PO is at index 1
-  return poList.slice(1).filter(r=>r[1]&&String(r[1]).trim());
+  return poList.slice(2).filter(r=>r[1]&&String(r[1]).trim());
 }
 
 function getModelsForPO(po){
@@ -398,9 +398,20 @@ function renderPODetail(po){
 }
 
 // ══ FORM ══
-function openForm(){
+let lastSubmission = { po: null, model: null };
+
+function openForm(prefill=false){
   resetForm();
   populatePODropdown();
+  if(prefill && lastSubmission.po){
+    // Restore last PO
+    document.getElementById('form-po').value = lastSubmission.po;
+    onPOChange();
+    // Restore last model after dropdown is populated
+    if(lastSubmission.model){
+      document.getElementById('form-model').value = lastSubmission.model;
+    }
+  }
   goTo('s-form');
 }
 
@@ -462,7 +473,8 @@ async function doSubmit(){
   try{
     await apiPost({action:'submitIepakotie', po, model, itemNumber:item, timestamp:new Date().toISOString()});
 
-    // Update local cache immediately so UI reflects change without re-fetch
+    // Save for prefill next time
+    lastSubmission = { po, model };
     if(poData){
       const row = poData.slice(1).find(r=>String(r[1]).trim()===po&&String(r[2]).trim()===model);
       if(row) row[4]=(Number(row[4])||0)+1;
