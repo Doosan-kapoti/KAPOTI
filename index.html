@@ -109,6 +109,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{padding:14px 32px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;border-radius:11px;cursor:pointer;box-shadow:0 4px 12px rgba(31,56,100,0.25)}
 .btn-secondary{background:none;border:none;color:#2E75B6;font-size:14px;cursor:pointer;padding:8px;font-weight:500}
 
+/* ── TABS */
+.tab-bar{display:flex;background:#fff;border-bottom:2px solid #e8ecf3;flex-shrink:0}
+.tab-btn{flex:1;padding:13px 8px;font-size:13px;font-weight:600;color:#888;background:none;border:none;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color 0.15s,border-color 0.15s}
+.tab-btn.active{color:#1F3864;border-bottom-color:#1F3864}
+.tab-btn:active{background:#f5f7ff}
+
 /* ── MODEL ITEM BLOCKS */
 .model-block{background:#f8faff;border:1.5px solid #e8ecf3;border-radius:12px;padding:14px;margin-bottom:10px}
 .model-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -174,7 +180,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <div class="home-footer">
     <button class="iepakot-btn" id="iepakot-btn" onclick="openForm()" disabled>
-      📦 Iepakot vienību
+      🚜 Iepakot kapotu
     </button>
   </div>
 </div>
@@ -190,7 +196,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="detail-po-num" id="detail-po-number">—</div>
     <div class="detail-po-sub" id="detail-po-sub">—</div>
   </div>
-  <div class="detail-body">
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-overview" onclick="switchTab('overview')">Pasūtītie</button>
+    <button class="tab-btn" id="tab-items" onclick="switchTab('items')">Iepakotie</button>
+  </div>
+  <!-- TAB 1: Model overview -->
+  <div class="detail-body" id="tab-content-overview">
     <table class="model-table">
       <thead>
         <tr>
@@ -203,11 +215,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr><td colspan="3" class="loading-state">Ielādē...</td></tr>
       </tbody>
     </table>
-    <div style="margin-top:16px">
-      <div class="section-label" style="margin-bottom:10px">Iesniegtās vienības pa modeļiem</div>
-      <div id="detail-items-section">
-        <div class="loading-state"><span class="spinner"></span>Ielādē...</div>
-      </div>
+  </div>
+  <!-- TAB 2: Submitted items -->
+  <div class="detail-body" id="tab-content-items" style="display:none">
+    <div id="detail-items-section">
+      <div class="loading-state"><span class="spinner"></span>Ielādē...</div>
     </div>
   </div>
 </div>
@@ -412,10 +424,26 @@ async function refreshData(fromDetail=false){
 }
 
 // ══ PO DETAIL ══
+function switchTab(tab){
+  // Update tab buttons
+  document.getElementById('tab-overview').classList.toggle('active', tab==='overview');
+  document.getElementById('tab-items').classList.toggle('active', tab==='items');
+  // Show/hide content
+  document.getElementById('tab-content-overview').style.display = tab==='overview'?'':'none';
+  document.getElementById('tab-content-items').style.display   = tab==='items'?'':'none';
+  // Load items lazily when tab 2 is first opened
+  if(tab==='items' && !iepakotieData){
+    loadAndRenderItems(currentPO);
+  } else if(tab==='items' && iepakotieData){
+    renderItemBlocks(currentPO);
+  }
+}
+
 function openPODetail(po){
   currentPO = po;
+  // Always start on tab 1
+  switchTab('overview');
   renderPODetail(po);
-  loadAndRenderItems(po);
   goTo('s-detail');
 }
 
