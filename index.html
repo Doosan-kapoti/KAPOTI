@@ -291,7 +291,7 @@ function getPORows(){
   if(!poList) return [];
   // PO List: row[0]=blank row, row[1]=header ["ID","PO"], data from row[2]
   // PO is at index 1
-  return poList.slice(2).filter(r=>r[1]&&String(r[1]).trim());
+  return poList.slice(1).filter(r=>r[1]&&String(r[1]).trim());
 }
 
 function getModelsForPO(po){
