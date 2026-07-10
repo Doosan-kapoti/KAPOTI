@@ -109,6 +109,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{padding:14px 32px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;border-radius:11px;cursor:pointer;box-shadow:0 4px 12px rgba(31,56,100,0.25)}
 .btn-secondary{background:none;border:none;color:#2E75B6;font-size:14px;cursor:pointer;padding:8px;font-weight:500}
 
+/* ── ITEMS SCREEN */
+.items-header{background:linear-gradient(135deg,#1F3864 0%,#2E75B6 100%);padding:18px;flex-shrink:0}
+.items-po{color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:2px}
+.items-model{color:#fff;font-size:22px;font-weight:700}
+.items-sub{color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px}
+.items-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
+.items-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.item-chip{background:#f0f4ff;border:1.5px solid #d0dcf5;border-radius:10px;padding:12px 8px;text-align:center;font-size:18px;font-weight:700;color:#1F3864;font-family:monospace;letter-spacing:2px}
+.item-chip-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.item-chip-time{font-size:10px;color:#aaa;font-family:inherit;font-weight:400;letter-spacing:0}
+
 /* ── STATES */
 .empty-state{text-align:center;padding:40px 20px;color:#aaa;font-size:14px}
 .empty-icon{font-size:36px;margin-bottom:10px;opacity:0.5}
@@ -151,7 +162,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <div class="home-footer">
     <button class="iepakot-btn" id="iepakot-btn" onclick="openForm()" disabled>
-      🚜 Iepakot Kapotu
+      📦 Iepakot vienību
     </button>
   </div>
 </div>
@@ -231,10 +242,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- ══ SCREEN 5: MODEL ITEMS ══ -->
+<div id="s-items" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-detail')">←</button>
+    <span class="topbar-title">Iesniegtās vienības</span>
+    <button class="refresh-btn" id="items-refresh-btn" onclick="refreshItems()" title="Atjaunot">↺</button>
+  </div>
+  <div class="items-header">
+    <div class="items-po" id="items-po-label">—</div>
+    <div class="items-model" id="items-model-label">—</div>
+    <div class="items-sub" id="items-sub-label">—</div>
+  </div>
+  <div class="items-body">
+    <div id="items-grid-wrap"></div>
+  </div>
+</div>
+
 </div>
 <script>
 // ══ CONFIG ══
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5M4-_CjPTRgTEFW13osGfMFPsMF6M2u1nAxUXegPGZkgXMXW1rvaj-cG175Iya8xI/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYgAZgR7tzHmjV0fSDll2qkuMcmBfJRLrW-LvUJsaiMfFjsym8U7-8RTmQx33y3Z1n/exec';
 const CACHE_TTL  = 60000; // 60 seconds
 
 // ══ STATE ══
@@ -386,19 +414,23 @@ function renderPODetail(po){
     const completed= Number(r[4])||0;
     const pct      = ordered>0?Math.min(100,Math.round(completed/ordered*100)):0;
     const cls      = completed===0?'c0':completed>=ordered?'cdone':'cpart';
-    return `<tr>
+    return `<tr onclick="openModelItems('${currentPO}','${modelis.replace(/'/g,"\\'")}')"
+               style="cursor:pointer">
       <td>
         <div class="model-name">${modelis}</div>
         <div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
       </td>
       <td class="col-ordered">${ordered}</td>
-      <td class="col-made ${cls}">${completed}</td>
+      <td class="col-made ${cls}">${completed}${completed>0?` <span style="font-size:10px;color:#aaa">›</span>`:''}
+      </td>
     </tr>`;
   }).join('');
 }
 
 // ══ FORM ══
-let lastSubmission = { po: null, model: null };
+let lastSubmission  = { po: null, model: null };
+let iepakotieData   = null;
+let currentModel    = null;
 
 function openForm(prefill=false){
   resetForm();
@@ -494,6 +526,71 @@ async function doSubmit(){
   }finally{
     btn.innerHTML='✓ Iesniegt';
     btn.disabled=false;
+  }
+}
+
+// ══ MODEL ITEMS ══
+async function openModelItems(po, model){
+  currentModel = model;
+  document.getElementById('items-po-label').textContent = `PO: ${po}`;
+  document.getElementById('items-model-label').textContent = model;
+  document.getElementById('items-sub-label').textContent = 'Ielādē...';
+  document.getElementById('items-grid-wrap').innerHTML =
+    '<div class="loading-state"><span class="spinner"></span>Ielādē vienības...</div>';
+  goTo('s-items');
+  await loadItemsForModel(po, model);
+}
+
+async function loadItemsForModel(po, model){
+  try{
+    const data = await apiFetch('getIepakotie');
+    iepakotieData = data;
+    renderModelItems(po, model);
+  }catch(e){
+    document.getElementById('items-grid-wrap').innerHTML =
+      `<div class="error-state">Neizdevās ielādēt: ${e.message}</div>`;
+  }
+}
+
+function renderModelItems(po, model){
+  if(!iepakotieData) return;
+  // Iepakotie: row[0]=ID row[1]=Timestamp row[2]=PO row[3]=Modelis row[4]=ItemNumber
+  const rows = iepakotieData.slice(1).filter(r=>
+    String(r[2]).trim()===String(po).trim() &&
+    String(r[3]).trim()===String(model).trim()
+  );
+  const wrap = document.getElementById('items-grid-wrap');
+  document.getElementById('items-sub-label').textContent =
+    `${rows.length} vienība${rows.length===1?'':'s'} iesniegta`;
+
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div>Nav iesniegtu vienību</div>';
+    return;
+  }
+
+  // Sort by item number ascending (smallest first)
+  const sorted = [...rows].sort((a,b)=>Number(a[4])-Number(b[4]));
+
+  wrap.innerHTML = `<div class="items-grid">${
+    sorted.map(r=>{
+      const itemNum = String(r[4]).trim();
+      const ts = r[1] ? new Date(r[1]) : null;
+      const timeStr = ts ? ts.toLocaleTimeString('lv',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="item-chip-wrap">
+        <div class="item-chip">${itemNum}</div>
+        <div class="item-chip-time">${timeStr}</div>
+      </div>`;
+    }).join('')
+  }</div>`;
+}
+
+async function refreshItems(){
+  const btn = document.getElementById('items-refresh-btn');
+  btn.classList.add('spinning');
+  try{
+    await loadItemsForModel(currentPO, currentModel);
+  }finally{
+    btn.classList.remove('spinning');
   }
 }
 
