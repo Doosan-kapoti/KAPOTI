@@ -109,6 +109,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{padding:14px 32px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;border-radius:11px;cursor:pointer;box-shadow:0 4px 12px rgba(31,56,100,0.25)}
 .btn-secondary{background:none;border:none;color:#2E75B6;font-size:14px;cursor:pointer;padding:8px;font-weight:500}
 
+/* ── ARCHIVE SECTION */
+.archive-toggle{width:100%;padding:12px 16px;background:#f5f5f5;border:1.5px solid #e8ecf3;border-radius:12px;font-size:13px;font-weight:600;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-top:8px;margin-bottom:8px}
+.archive-toggle:active{background:#eeeeee}
+.archive-toggle-arrow{transition:transform 0.2s}
+.archive-toggle-arrow.open{transform:rotate(180deg)}
+.archive-section{display:none}
+.archive-section.open{display:block}
+.po-card.archived{opacity:0.6;border-style:dashed}
+
 /* ── TABS */
 .tab-bar{display:flex;background:#fff;border-bottom:2px solid #e8ecf3;flex-shrink:0}
 .tab-btn{flex:1;padding:13px 8px;font-size:13px;font-weight:600;color:#888;background:none;border:none;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color 0.15s,border-color 0.15s}
@@ -198,8 +207,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <!-- TABS -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-overview" onclick="switchTab('overview')">Pasūtītie</button>
-    <button class="tab-btn" id="tab-items" onclick="switchTab('items')">Iepakotie</button>
+    <button class="tab-btn active" id="tab-overview" onclick="switchTab('overview')">Modeļu pārskats</button>
+    <button class="tab-btn" id="tab-items" onclick="switchTab('items')">Iesniegtās vienības</button>
   </div>
   <!-- TAB 1: Model overview -->
   <div class="detail-body" id="tab-content-overview">
@@ -248,7 +257,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
     <div class="field-group">
-      <div class="field-label">Vienības numurs</div>
+      <div class="field-label">Kapota numurs</div>
       <div class="field-hint">Ievadi 3 ciparus</div>
       <input class="digit-box" id="form-item" type="text" inputmode="numeric"
              maxlength="3" placeholder="000" autocomplete="off"
@@ -292,7 +301,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <script>
 // ══ CONFIG ══
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYgAZgR7tzHmjV0fSDll2qkuMcmBfJRLrW-LvUJsaiMfFjsym8U7-8RTmQx33y3Z1n/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyep1KgWfB9yglqygL04vKjpnmNPpBzCl7dr56M5-5JRiEEw9pmmtMQuys0fIqteS8/exec';
 const CACHE_TTL  = 60000; // 60 seconds
 
 // ══ STATE ══
@@ -350,7 +359,7 @@ function getPORows(){
   if(!poList) return [];
   // PO List: row[0]=blank row, row[1]=header ["ID","PO"], data from row[2]
   // PO is at index 1
-  return poList.slice(1).filter(r=>r[1]&&String(r[1]).trim());
+  return poList.slice(2).filter(r=>r[1]&&String(r[1]).trim());
 }
 
 function getModelsForPO(po){
@@ -374,24 +383,36 @@ async function initHome(){
 
 function renderHome(){
   const rows = getPORows();
+  const now = new Date();
+  const ARCHIVE_DAYS = 60;
+
   let totalOrdered=0, totalCompleted=0;
-  const html = rows.map(row=>{
+  const active=[], completed=[], archived=[];
+
+  rows.forEach(row=>{
     const po = String(row[1]).trim();
     const models = getModelsForPO(po);
     const ord  = models.reduce((s,r)=>s+(Number(r[3])||0),0);
     const comp = models.reduce((s,r)=>s+(Number(r[4])||0),0);
+    // CompletedDate is index 5 in PO Master (column F)
+    const compDateRaw = models.length ? models[0][5] : null;
+    const compDate = compDateRaw ? new Date(compDateRaw) : null;
+    const daysSinceDone = compDate ? Math.floor((now-compDate)/(1000*60*60*24)) : null;
+    const isDone = ord>0 && comp>=ord;
+    const isArchived = isDone && compDate && daysSinceDone>=ARCHIVE_DAYS;
+
     totalOrdered   += ord;
     totalCompleted += comp;
-    const pct  = ord>0 ? Math.min(100,Math.round(comp/ord*100)) : 0;
-    const done = comp>=ord && ord>0;
-    const none = comp===0;
-    const badgeCls = done?'po-badge-done':none?'po-badge-new':'po-badge-partial';
-    const badgeTxt = done?'Gatavs':none?'Jauns':`${pct}%`;
-    const fillCls  = done?'complete':'';
-    return `<div class="po-card" onclick="openPODetail('${po}')">
+
+    const pct      = ord>0?Math.min(100,Math.round(comp/ord*100)):0;
+    const none     = comp===0;
+    const badgeCls = isDone?'po-badge-done':none?'po-badge-new':'po-badge-partial';
+    const badgeTxt = isDone?'Gatavs':none?'Jauns':`${pct}%`;
+    const fillCls  = isDone?'complete':'';
+    const card = `<div class="po-card${isArchived?' archived':''}" onclick="openPODetail('${po}')">
       <div class="po-card-left">
         <div class="po-number">${po}</div>
-        <div class="po-progress-text">${comp} / ${ord} vienības</div>
+        <div class="po-progress-text">${comp} / ${ord} vienības${isArchived&&compDate?` · Pabeigts ${compDate.toLocaleDateString('lv')}`:''}</div>
         <div class="po-progress-bar"><div class="po-progress-fill ${fillCls}" style="width:${pct}%"></div></div>
       </div>
       <div class="po-card-right">
@@ -399,13 +420,52 @@ function renderHome(){
         <span class="po-arrow">›</span>
       </div>
     </div>`;
-  }).join('');
 
-  document.getElementById('po-list').innerHTML = html ||
-    '<div class="empty-state"><div class="empty-icon">📋</div>Nav aktīvu pasūtījumu</div>';
-  document.getElementById('stat-pos').textContent   = rows.length;
+    if(isArchived) archived.push(card);
+    else if(isDone) completed.push(card);
+    else active.push(card);
+  });
+
+  let html = '';
+
+  // Active POs
+  if(active.length){
+    html += `<div class="section-label" style="margin-bottom:10px">Aktīvie pasūtījumi</div>`;
+    html += active.join('');
+  }
+
+  // Completed POs (done but not yet archived)
+  if(completed.length){
+    html += `<div class="section-label" style="margin-top:16px;margin-bottom:10px">Pabeigti</div>`;
+    html += completed.join('');
+  }
+
+  // Archived POs (collapsed)
+  if(archived.length){
+    html += `<button class="archive-toggle" onclick="toggleArchive(this)">
+      <span>📦 Arhīvs (${archived.length} PO)</span>
+      <span class="archive-toggle-arrow">▼</span>
+    </button>
+    <div class="archive-section">
+      ${archived.join('')}
+    </div>`;
+  }
+
+  if(!html){
+    html = '<div class="empty-state"><div class="empty-icon">📋</div>Nav pasūtījumu</div>';
+  }
+
+  document.getElementById('po-list').innerHTML = html;
+  document.getElementById('stat-pos').textContent   = active.length + completed.length;
   document.getElementById('stat-total').textContent = totalOrdered;
   document.getElementById('stat-done').textContent  = totalCompleted;
+}
+
+function toggleArchive(btn){
+  const section = btn.nextElementSibling;
+  const arrow   = btn.querySelector('.archive-toggle-arrow');
+  const isOpen  = section.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
 }
 
 async function refreshData(fromDetail=false){
