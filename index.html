@@ -695,12 +695,9 @@ async function doSubmit(){
 
     // Save for prefill next time
     lastSubmission = { po, model };
-    if(poData){
-      const row = poData.slice(1).find(r=>String(r[1]).trim()===po&&String(r[2]).trim()===model);
-      if(row) row[4]=(Number(row[4])||0)+1;
-    }
-    renderHome(); // re-render home stats in background
-
+    lastFetched = 0;
+    iepakotieData = null;
+    
     // Show success
     document.getElementById('success-detail').innerHTML = `
       <div class="success-detail-row"><span class="sdl">PO</span><span class="sdv">${po}</span></div>
