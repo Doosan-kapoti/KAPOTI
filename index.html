@@ -420,7 +420,7 @@ function renderHome(){
     const card = `<div class="po-card${isArchived?' archived':''}" onclick="openPODetail('${po}')">
       <div class="po-card-left">
         <div class="po-number">${po}</div>
-        <div class="po-progress-text">${comp} / ${ord} vienības${orderDate?`  ·  📅 ${orderDate}`:''}${isArchived&&compDate?` · Pabeigts ${compDate.toLocaleDateString('lv')}`:''}</div>
+        <div class="po-progress-text">${comp} / ${ord} vienības${orderDate?`  &nbsp;&nbsp;&nbsp;&nbsp;  📅 ${orderDate}`:''}${isArchived&&compDate?` · Pabeigts ${compDate.toLocaleDateString('lv')}`:''}</div>
         <div class="po-progress-bar"><div class="po-progress-fill ${fillCls}" style="width:${pct}%"></div></div>
       </div>
       <div class="po-card-right">
