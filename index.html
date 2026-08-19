@@ -111,6 +111,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{padding:14px 32px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;border-radius:11px;cursor:pointer;box-shadow:0 4px 12px rgba(31,56,100,0.25)}
 .btn-secondary{background:none;border:none;color:#2E75B6;font-size:14px;cursor:pointer;padding:8px;font-weight:500}
 
+/* ── FAB BUTTON */
+.fab{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#2E75B6,#1F3864);color:#fff;border:none;cursor:pointer;font-size:26px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(31,56,100,0.4);z-index:100;transition:transform 0.15s,opacity 0.15s}
+.fab:active{transform:scale(0.92)}
+.fab.visible{display:flex}
+
 /* ── ARCHIVE SECTION */
 .archive-toggle{width:100%;padding:12px 16px;background:#f5f5f5;border:1.5px solid #e8ecf3;border-radius:12px;font-size:13px;font-weight:600;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-top:8px;margin-bottom:8px}
 .archive-toggle:active{background:#eeeeee}
@@ -189,11 +194,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
   </div>
-  <div class="home-footer">
-    <button class="iepakot-btn" id="iepakot-btn" onclick="openForm()" disabled>
-      🚜 Iepakot kapotu
-    </button>
-  </div>
 </div>
 
 <!-- ══ SCREEN 2: PO DETAIL ══ -->
@@ -232,11 +232,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="detail-items-section">
       <div class="loading-state"><span class="spinner"></span>Ielādē...</div>
     </div>
-  </div>
-  <div class="home-footer">
-    <button class="iepakot-btn" onclick="openFormFromDetail()">
-      🚜 Iepakot kapotu
-    </button>
   </div>
 </div>
 
@@ -289,7 +284,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- ══ SCREEN 5: MODEL ITEMS ══ -->
+<!-- ══ FAB ══ -->
+<button class="fab" id="fab-btn" onclick="openFormFromDetail()" title="Iepakot kapotu">🚜</button>
+
+</div>
 <div id="s-items" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-detail')">←</button>
@@ -323,7 +321,15 @@ function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='s-home') iepakotieData=null;
+  // Show FAB on home and detail screens (detail tab controls it further)
+  const fab = document.getElementById('fab-btn');
+  if(fab){
+    const showOnHome   = id==='s-home';
+    const showOnDetail = id==='s-detail';
+    fab.classList.toggle('visible', showOnHome||showOnDetail);
+    // Update FAB action based on screen
+    fab.onclick = showOnDetail ? openFormFromDetail : ()=>openForm();
+  }
 }
 
 // ══ API ══
@@ -348,19 +354,27 @@ async function apiPost(payload){
   return d;
 }
 
+async function apiFetchAll(){
+  const url = `${SCRIPT_URL}?action=getAll&t=${Date.now()}`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const txt = await r.text();
+  let d;
+  try{d=JSON.parse(txt);}catch(e){throw new Error('Servera atbilde nav derīga');}
+  if(d.status!=='ok') throw new Error(d.message||'Kļūda');
+  return d;
+}
+
 // ══ DATA ══
 async function loadData(force=false){
   const now = Date.now();
   if(!force && poData && poList && (now-lastFetched)<CACHE_TTL) return;
-  const [master, list] = await Promise.all([
-    apiFetch('getPOMaster'),
-    apiFetch('getPOList')
-  ]);
-  // PO List: row = [_RowNumber, ID, PO]  → PO is index 2
-  // PO Master: row = [_RowNumber, ID, PO, Modelis, Ordered, Completed] → PO=2,Modelis=3,Ordered=4,Completed=5
-  poData      = master;
-  poList      = list;
-  lastFetched = now;
+  // Single combined call — much faster than 3 separate requests
+  const d = await apiFetchAll();
+  poData        = d.poMaster || [];
+  poList        = d.poList   || [];
+  iepakotieData = d.iepakotie|| [];
+  lastFetched   = now;
 }
 
 function getPORows(){
@@ -382,7 +396,6 @@ async function initHome(){
   try{
     await loadData();
     renderHome();
-    document.getElementById('iepakot-btn').disabled = false;
   }catch(e){
     document.getElementById('po-list').innerHTML =
       `<div class="error-state">Neizdevās ielādēt datus.<br><strong>${e.message}</strong><br><br><button onclick="initHome()" style="color:#2E75B6;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600">↺ Mēģināt vēlreiz</button></div>`;
@@ -413,7 +426,7 @@ function renderHome(){
     totalOrdered   += ord;
     totalCompleted += comp;
 
-     const pct      = ord>0?Math.min(100,Math.round(comp/ord*100)):0;
+    const pct      = ord>0?Math.min(100,Math.round(comp/ord*100)):0;
     const none     = comp===0;
     const badgeCls = isDone?'po-badge-done':none?'po-badge-new':'po-badge-partial';
     const badgeTxt = isDone?'Gatavs':none?'Jauns':`${pct}%`;
@@ -421,7 +434,7 @@ function renderHome(){
     const card = `<div class="po-card${isArchived?' archived':''}" onclick="openPODetail('${po}')">
       <div class="po-card-left">
         <div class="po-number">${po}</div>
-        <div class="po-progress-text">${comp} / ${ord} vienības${orderDate?`  &nbsp;&nbsp;&nbsp;&nbsp;  📅 ${orderDate}`:''}${isArchived&&compDate?` · Pabeigts ${compDate.toLocaleDateString('lv')}`:''}</div>
+        <div class="po-progress-text">${comp} / ${ord} vienības${orderDate?`  ·  📅 ${orderDate}`:''}${isArchived&&compDate?` · Pabeigts ${compDate.toLocaleDateString('lv')}`:''}</div>
         <div class="po-progress-bar"><div class="po-progress-fill ${fillCls}" style="width:${pct}%"></div></div>
       </div>
       <div class="po-card-right">
@@ -429,12 +442,12 @@ function renderHome(){
         <span class="po-arrow">›</span>
       </div>
     </div>`;
- 
+
     if(isArchived) archived.push(card);
     else if(isDone) completed.push(card);
     else active.push(card);
   });
-  
+
   let html = '';
 
   // Active POs
@@ -481,8 +494,7 @@ async function refreshData(fromDetail=false){
   const btn = document.querySelector('.refresh-btn');
   if(btn) btn.classList.add('spinning');
   try{
-    await loadData(true);
-    iepakotieData = null; // clear items cache too
+    await loadData(true); // reloads all three including iepakotieData
     if(fromDetail && currentPO){
       renderPODetail(currentPO);
       await loadAndRenderItems(currentPO);
@@ -498,7 +510,7 @@ function repeatSubmit(){
   if(src==='detail') openFormFromDetail();
   else openForm(true);
 }
- 
+
 function switchTab(tab){
   // Update tab buttons
   document.getElementById('tab-overview').classList.toggle('active', tab==='overview');
@@ -506,6 +518,9 @@ function switchTab(tab){
   // Show/hide content
   document.getElementById('tab-content-overview').style.display = tab==='overview'?'':'none';
   document.getElementById('tab-content-items').style.display   = tab==='items'?'':'none';
+  // Hide FAB on items tab
+  const fab = document.getElementById('fab-btn');
+  if(fab) fab.classList.toggle('visible', tab==='overview');
   // Load items lazily when tab 2 is first opened
   if(tab==='items' && !iepakotieData){
     loadAndRenderItems(currentPO);
@@ -523,13 +538,16 @@ function openPODetail(po){
 }
 
 async function loadAndRenderItems(po){
+  // iepakotieData is already loaded by loadData() via the combined getAll call
+  if(iepakotieData){
+    renderItemBlocks(po);
+    return;
+  }
+  // Fallback — reload everything if somehow not cached
   document.getElementById('detail-items-section').innerHTML =
     '<div class="loading-state"><span class="spinner"></span>Ielādē vienības...</div>';
   try{
-    if(!iepakotieData){
-      const data = await apiFetch('getIepakotie');
-      iepakotieData = data;
-    }
+    await loadData(true);
     renderItemBlocks(po);
   }catch(e){
     document.getElementById('detail-items-section').innerHTML =
@@ -698,9 +716,9 @@ async function doSubmit(){
 
     // Save for prefill next time
     lastSubmission = { po, model };
+    // Force fresh reload next time so counts are accurate from sheet
     lastFetched = 0;
-    iepakotieData = null;
-    
+
     // Show success
     document.getElementById('success-detail').innerHTML = `
       <div class="success-detail-row"><span class="sdl">PO</span><span class="sdv">${po}</span></div>
